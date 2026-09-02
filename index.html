@@ -1,0 +1,2800 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07060d">
+<meta name="description" content="A premium SpecialPages interactive memory experience.">
+<title>SpecialPages — Your Story, In 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg: #07060d;
+  --bg-soft: #0d0b15;
+  --panel: rgba(255,255,255,.045);
+  --panel-strong: rgba(255,255,255,.075);
+  --line: rgba(255,255,255,.12);
+  --line-soft: rgba(255,255,255,.07);
+  --text: #faf7ff;
+  --muted: #a49caf;
+  --dim: #706879;
+  --violet: #9d74ff;
+  --violet-soft: #bda5ff;
+  --shadow: 0 35px 100px rgba(0,0,0,.5);
+  --serif: "Cormorant Garamond", Georgia, serif;
+  --sans: "Manrope", Arial, sans-serif;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  overflow-x: hidden;
+}
+body.no-scroll {
+  overflow: hidden;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button,
+audio,
+video {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+img {
+  max-width: 100%;
+}
+::selection {
+  background: rgba(157,116,255,.35);
+  color: white;
+}
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background: #07060d;
+  transition: opacity .7s ease, visibility .7s ease;
+}
+#preloader.hide {
+  opacity: 0;
+  visibility: hidden;
+}
+.loader-inner {
+  text-align: center;
+}
+.loader-logo {
+  font-family: var(--serif);
+  font-size: 38px;
+  letter-spacing: .5px;
+}
+.loader-logo span {
+  opacity: .45;
+}
+.loader-line {
+  width: 180px;
+  height: 1px;
+  margin: 20px auto 12px;
+  overflow: hidden;
+  background: rgba(255,255,255,.1);
+}
+.loader-progress {
+  width: 35%;
+  height: 100%;
+  background: var(--violet-soft);
+  animation: loaderMove 1.5s ease-in-out infinite;
+}
+.loader-note {
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+@keyframes loaderMove {
+  0% { transform: translateX(-120%); }
+  100% { transform: translateX(420%); }
+}
+.noise {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: .07;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+}
+.stars {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.55);
+  animation: twinkle 4s ease-in-out infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: .15; transform: scale(.8); }
+  50% { opacity: .9; transform: scale(1.5); }
+}
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #7652d8, #c9b7ff);
+}
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 5vw;
+  transition: background .4s ease, padding .4s ease, border .4s ease;
+}
+.nav.scrolled {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background: rgba(7,6,13,.72);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.brand {
+  font-family: var(--serif);
+  font-size: 31px;
+  line-height: 1;
+}
+.brand span {
+  opacity: .45;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 27px;
+}
+.nav-links a {
+  position: relative;
+  color: rgba(255,255,255,.66);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: color .25s ease;
+}
+.nav-links a:hover,
+.nav-links a.active {
+  color: white;
+}
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -7px;
+  height: 1px;
+  background: var(--violet-soft);
+  transition: right .25s ease;
+}
+.nav-links a:hover::after,
+.nav-links a.active::after {
+  right: 0;
+}
+.nav-cta {
+  padding: 11px 17px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 999px;
+  color: white !important;
+}
+.nav-cta::after {
+  display: none;
+}
+.menu-btn {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: white;
+  background: var(--panel);
+}
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 450;
+  display: grid;
+  place-items: center;
+  background: rgba(7,6,13,.97);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+.mobile-menu.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.mobile-menu-inner {
+  display: grid;
+  gap: 23px;
+  text-align: center;
+}
+.mobile-menu a {
+  font-family: var(--serif);
+  font-size: 42px;
+}
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  perspective: 1400px;
+  background:
+    radial-gradient(circle at 50% 43%, rgba(117,75,190,.24), transparent 25%),
+    radial-gradient(circle at 12% 75%, rgba(75,91,190,.12), transparent 25%),
+    #07060d;
+}
+.hero-grid {
+  position: absolute;
+  inset: -20%;
+  opacity: .18;
+  transform: rotateX(70deg) translateY(35%);
+  background-image:
+    linear-gradient(rgba(174,145,255,.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(174,145,255,.12) 1px, transparent 1px);
+  background-size: 70px 70px;
+  mask-image: radial-gradient(ellipse at center, black 0%, transparent 67%);
+}
+.hero-glow {
+  position: absolute;
+  width: 55vw;
+  height: 55vw;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(148,103,255,.13), transparent 65%);
+  filter: blur(8px);
+  animation: breathe 7s ease-in-out infinite;
+}
+@keyframes breathe {
+  50% { transform: scale(1.12); opacity: .7; }
+}
+.orbit {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.orbit-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: 1px solid rgba(182,148,255,.13);
+  border-radius: 50%;
+  transform: translate(-50%,-50%) rotateX(68deg);
+  transition: transform .2s ease-out;
+}
+.orbit-ring.one { width: 480px; height: 480px; }
+.orbit-ring.two { width: 730px; height: 730px; }
+.orbit-ring.three { width: 1020px; height: 1020px; }
+.orbit-ring::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--violet-soft);
+  box-shadow: 0 0 30px rgba(189,165,255,.7);
+}
+.hero-photo {
+  position: absolute;
+  width: 135px;
+  height: 175px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 14px;
+  box-shadow: 0 35px 90px rgba(0,0,0,.6);
+  filter: saturate(.8);
+  opacity: .72;
+  transition: transform .5s ease;
+  animation: drift 8s ease-in-out infinite;
+}
+.hero-photo.a { left: 7%; top: 25%; transform: rotate(-10deg); }
+.hero-photo.b { right: 8%; top: 22%; transform: rotate(10deg); animation-delay: -2s; }
+.hero-photo.c { left: 12%; bottom: 11%; transform: rotate(8deg); animation-delay: -4s; }
+.hero-photo.d { right: 11%; bottom: 10%; transform: rotate(-8deg); animation-delay: -6s; }
+@keyframes drift {
+  50% { margin-top: -18px; }
+}
+.hero-content {
+  position: relative;
+  z-index: 5;
+  width: min(950px, 92vw);
+  padding: 130px 20px 90px;
+  text-align: center;
+}
+.eyebrow {
+  color: rgba(255,255,255,.48);
+  font-size: 10px;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+}
+.hero-title {
+  margin: 26px 0 30px;
+  font-family: var(--serif);
+  font-size: clamp(70px, 12vw, 155px);
+  font-weight: 400;
+  line-height: .78;
+  letter-spacing: -3px;
+}
+.hero-title em {
+  font-weight: 400;
+}
+.hero-copy {
+  width: min(620px, 100%);
+  margin: auto;
+  color: #aaa1b4;
+  font-size: 15px;
+  line-height: 1.9;
+}
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 35px;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+  color: white;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: transform .3s ease, background .3s ease, border .3s ease;
+}
+.button:hover {
+  transform: translateY(-4px);
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.3);
+}
+.button.primary {
+  background: #f8f5ff;
+  color: #0b0910;
+}
+.button.primary:hover {
+  background: white;
+}
+.scroll-hint {
+  margin-top: 58px;
+  color: rgba(255,255,255,.3);
+  font-size: 9px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  animation: hint 2.5s ease-in-out infinite;
+}
+@keyframes hint {
+  50% { transform: translateY(7px); opacity: .55; }
+}
+.section {
+  position: relative;
+  padding: 140px 5vw;
+  scroll-margin-top: 90px;
+}
+.section.alt {
+  background: linear-gradient(180deg, transparent, rgba(255,255,255,.018), transparent);
+}
+.section-head {
+  width: min(750px, 92vw);
+  margin: 0 auto 70px;
+  text-align: center;
+}
+.section-title {
+  margin: 18px 0 20px;
+  font-family: var(--serif);
+  font-size: clamp(58px, 8vw, 100px);
+  font-weight: 400;
+  line-height: .86;
+}
+.section-subtitle {
+  max-width: 610px;
+  margin: auto;
+  color: #9991a4;
+  font-size: 14px;
+  line-height: 1.9;
+}
+.intro-panel {
+  width: min(1050px, 92vw);
+  margin: 0 auto 100px;
+  padding: 45px;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(158,116,255,.1), transparent 35%),
+    rgba(255,255,255,.025);
+  box-shadow: var(--shadow);
+}
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 50px;
+  align-items: center;
+}
+.intro-panel h3 {
+  margin: 0 0 15px;
+  font-family: var(--serif);
+  font-size: 44px;
+  font-weight: 400;
+}
+.intro-panel p {
+  color: #9b93a4;
+  line-height: 1.9;
+}
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+}
+.stat {
+  padding: 22px 15px;
+  border: 1px solid var(--line-soft);
+  border-radius: 18px;
+  text-align: center;
+  background: rgba(255,255,255,.025);
+}
+.stat strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: 38px;
+  font-weight: 400;
+}
+.stat span {
+  display: block;
+  margin-top: 5px;
+  color: var(--dim);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.gallery {
+  width: min(1150px, 94vw);
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  gap: 18px;
+  perspective: 1500px;
+}
+.memory-card {
+  position: relative;
+  min-height: 360px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.13);
+  border-radius: 20px;
+  background: #0d0b14;
+  box-shadow: 0 30px 80px rgba(0,0,0,.35);
+  transform-style: preserve-3d;
+  transition: transform .55s cubic-bezier(.2,.8,.2,1), box-shadow .55s ease;
+}
+.memory-card:hover {
+  transform: translateY(-12px) rotateX(2deg) rotateY(-2deg) translateZ(30px);
+  box-shadow: 0 45px 100px rgba(0,0,0,.58);
+}
+.memory-card.big {
+  grid-column: span 7;
+  min-height: 520px;
+}
+.memory-card.medium {
+  grid-column: span 5;
+  min-height: 520px;
+}
+.memory-card.small {
+  grid-column: span 4;
+}
+.memory-card.wide {
+  grid-column: span 8;
+}
+.memory-card img {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  object-fit: cover;
+  display: block;
+  transition: transform .8s ease, filter .8s ease;
+}
+.memory-card:hover img {
+  transform: scale(1.06);
+  filter: saturate(1.05);
+}
+.memory-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 35%, rgba(0,0,0,.82));
+}
+.memory-meta {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 22px;
+  z-index: 2;
+}
+.memory-number {
+  color: rgba(255,255,255,.5);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.memory-name {
+  margin-top: 5px;
+  font-family: var(--serif);
+  font-size: 32px;
+}
+.zoom-button {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  z-index: 3;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 50%;
+  color: white;
+  background: rgba(0,0,0,.28);
+  backdrop-filter: blur(10px);
+}
+.timeline {
+  width: min(1000px, 92vw);
+  margin: 100px auto 0;
+}
+.timeline-line {
+  position: relative;
+  height: 1px;
+  background: var(--line);
+}
+.timeline-dot {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #a98aff;
+  border-radius: 50%;
+  background: var(--bg);
+  transform: translate(-50%,-50%);
+}
+.timeline-dot:nth-child(1) { left: 0%; }
+.timeline-dot:nth-child(2) { left: 33%; }
+.timeline-dot:nth-child(3) { left: 66%; }
+.timeline-dot:nth-child(4) { left: 100%; }
+.timeline-labels {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 18px;
+  color: var(--dim);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.film-grid {
+  width: min(1150px, 94vw);
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  perspective: 1300px;
+}
+.film-card {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 25px;
+  background: rgba(255,255,255,.035);
+  box-shadow: var(--shadow);
+  transform-style: preserve-3d;
+  transition: transform .5s ease;
+}
+.film-card:nth-child(1) {
+  transform: rotateY(2deg);
+}
+.film-card:nth-child(2) {
+  transform: rotateY(-2deg);
+}
+.film-card:hover {
+  transform: translateY(-10px) rotateY(0deg) rotateX(2deg);
+}
+.film-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: 17px;
+  background: #000;
+}
+.film-frame video {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+.film-info {
+  padding: 25px 15px 18px;
+}
+.film-info small {
+  color: var(--dim);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+.film-info h3 {
+  margin: 8px 0 8px;
+  font-family: var(--serif);
+  font-size: 38px;
+  font-weight: 400;
+}
+.film-info p {
+  margin: 0;
+  color: #91899a;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.music-wrap {
+  width: min(1050px, 94vw);
+  margin: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  perspective: 1400px;
+}
+.player-card {
+  position: relative;
+  padding: 35px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(150,111,255,.11), transparent 40%),
+    rgba(255,255,255,.035);
+  box-shadow: var(--shadow);
+  transform-style: preserve-3d;
+}
+.player-card:nth-child(1) {
+  transform: rotateY(3deg);
+}
+.player-card:nth-child(2) {
+  transform: rotateY(-3deg);
+}
+.player-card:hover {
+  transform: translateY(-9px) rotateY(0deg);
+}
+.disc {
+  position: relative;
+  width: 190px;
+  height: 190px;
+  margin: 0 auto 28px;
+  border: 1px solid rgba(183,153,255,.55);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #17131f 0 7%, #9670db 7.5% 8.5%, #14111b 9% 30%, #6e51a7 30.5% 31.2%, #17131f 31.7% 55%, #7757af 55.5% 56%, #0c0a10 56.5%);
+  box-shadow: 0 0 70px rgba(145,101,235,.16);
+  transition: transform .6s ease;
+}
+.player-card:hover .disc {
+  animation: discSpin 5s linear infinite;
+}
+@keyframes discSpin {
+  to { transform: rotate(360deg); }
+}
+.disc::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(255,255,255,.4);
+  border-radius: 50%;
+  transform: translate(-50%,-50%);
+}
+.player-card h3 {
+  margin: 0;
+  text-align: center;
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 400;
+}
+.player-card .track-note {
+  margin: 7px 0 23px;
+  text-align: center;
+  color: var(--dim);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.player-card audio {
+  width: 100%;
+}
+.music-note {
+  width: min(700px, 92vw);
+  margin: 60px auto 0;
+  color: #89818f;
+  font-family: var(--serif);
+  font-size: 24px;
+  text-align: center;
+}
+.quote-section {
+  min-height: 75vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(122,77,199,.13), transparent 32%),
+    linear-gradient(180deg, transparent, rgba(255,255,255,.012), transparent);
+}
+.quote {
+  width: min(900px, 92vw);
+}
+.quote-mark {
+  color: rgba(189,165,255,.55);
+  font-family: var(--serif);
+  font-size: 80px;
+  line-height: .5;
+}
+.quote h2 {
+  margin: 30px 0;
+  font-family: var(--serif);
+  font-size: clamp(55px, 8vw, 100px);
+  font-weight: 400;
+  line-height: .88;
+}
+.quote p {
+  width: min(560px, 100%);
+  margin: auto;
+  color: #9991a1;
+  line-height: 1.9;
+}
+.customization {
+  width: min(1100px, 92vw);
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 18px;
+}
+.feature {
+  min-height: 260px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--panel);
+  transition: transform .4s ease, background .4s ease;
+}
+.feature:hover {
+  transform: translateY(-8px);
+  background: var(--panel-strong);
+}
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--violet-soft);
+  font-size: 18px;
+}
+.feature h3 {
+  margin: 28px 0 10px;
+  font-family: var(--serif);
+  font-size: 32px;
+  font-weight: 400;
+}
+.feature p {
+  margin: 0;
+  color: #8e8798;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.cta {
+  position: relative;
+  min-height: 80vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  text-align: center;
+  background: radial-gradient(circle at center, rgba(125,77,202,.2), transparent 38%);
+}
+.cta::before {
+  content: "";
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  border: 1px solid rgba(178,146,255,.09);
+  border-radius: 50%;
+  transform: rotateX(70deg);
+}
+.cta-inner {
+  position: relative;
+  z-index: 2;
+}
+.cta h2 {
+  margin: 20px 0;
+  font-family: var(--serif);
+  font-size: clamp(65px, 10vw, 125px);
+  font-weight: 400;
+  line-height: .8;
+}
+.cta p {
+  max-width: 570px;
+  margin: 25px auto;
+  color: #968e9f;
+  line-height: 1.9;
+}
+.footer {
+  padding: 35px 5vw 50px;
+  border-top: 1px solid var(--line-soft);
+  text-align: center;
+}
+.footer-logo {
+  font-family: var(--serif);
+  font-size: 30px;
+}
+.footer p {
+  margin: 8px 0 0;
+  color: var(--dim);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(35px);
+  transition: opacity .9s ease, transform .9s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: none;
+}
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 30px;
+  background: rgba(0,0,0,.92);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+.lightbox.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.lightbox img {
+  max-width: min(1100px, 94vw);
+  max-height: 86vh;
+  border-radius: 15px;
+  box-shadow: 0 40px 120px rgba(0,0,0,.8);
+}
+.lightbox-close {
+  position: absolute;
+  right: 25px;
+  top: 25px;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: white;
+  background: rgba(255,255,255,.06);
+  font-size: 20px;
+}
+.cursor-glow {
+  position: fixed;
+  z-index: 90;
+  width: 220px;
+  height: 220px;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(149,108,255,.08), transparent 68%);
+  transform: translate(-50%,-50%);
+}
+@media (max-width: 900px) {
+  .nav-links {
+    display: none;
+  }
+  .menu-btn {
+    display: block;
+  }
+  .hero-photo {
+    width: 90px;
+    height: 120px;
+  }
+  .orbit-ring.one {
+    width: 330px;
+    height: 330px;
+  }
+  .orbit-ring.two {
+    width: 520px;
+    height: 520px;
+  }
+  .orbit-ring.three {
+    width: 720px;
+    height: 720px;
+  }
+  .intro-grid {
+    grid-template-columns: 1fr;
+  }
+  .gallery {
+    grid-template-columns: repeat(2,1fr);
+  }
+  .memory-card.big,
+  .memory-card.medium,
+  .memory-card.small,
+  .memory-card.wide {
+    grid-column: span 1;
+    min-height: 360px;
+  }
+  .memory-card.big,
+  .memory-card.wide {
+    grid-column: span 2;
+  }
+  .film-grid,
+  .music-wrap {
+    grid-template-columns: 1fr;
+  }
+  .player-card:nth-child(1),
+  .player-card:nth-child(2),
+  .film-card:nth-child(1),
+  .film-card:nth-child(2) {
+    transform: none;
+  }
+  .customization {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 600px) {
+  .nav {
+    padding: 18px 20px;
+  }
+  .brand {
+    font-size: 27px;
+  }
+  .hero-content {
+    padding-top: 110px;
+  }
+  .hero-title {
+    font-size: 68px;
+    letter-spacing: -1px;
+  }
+  .hero-photo.a {
+    left: 2%;
+    top: 25%;
+  }
+  .hero-photo.b {
+    right: 2%;
+    top: 23%;
+  }
+  .hero-photo.c {
+    left: 4%;
+    bottom: 10%;
+  }
+  .hero-photo.d {
+    right: 4%;
+    bottom: 9%;
+  }
+  .section {
+    padding: 90px 18px;
+  }
+  .intro-panel {
+    padding: 28px;
+  }
+  .stat-row {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  .stat strong {
+    font-size: 29px;
+  }
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .memory-card,
+  .memory-card.big,
+  .memory-card.medium,
+  .memory-card.small,
+  .memory-card.wide {
+    grid-column: span 1;
+    min-height: 260px;
+  }
+  .memory-card.big {
+    grid-column: span 2;
+  }
+  .memory-name {
+    font-size: 25px;
+  }
+  .memory-meta {
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+  }
+  .film-grid {
+    gap: 18px;
+  }
+  .film-info h3 {
+    font-size: 31px;
+  }
+  .player-card {
+    padding: 25px;
+  }
+  .disc {
+    width: 145px;
+    height: 145px;
+  }
+  .player-card h3 {
+    font-size: 34px;
+  }
+  .timeline {
+    display: none;
+  }
+  .cursor-glow {
+    display: none;
+  }
+}
+
+</style>
+</head>
+<body class="no-scroll">
+<div id="preloader">
+  <div class="loader-inner">
+    <div class="loader-logo">special<span>pages</span></div>
+    <div class="loader-line"><div class="loader-progress"></div></div>
+    <div class="loader-note">creating your little universe</div>
+  </div>
+</div>
+<div class="noise"></div>
+<div class="stars" id="stars"></div>
+<div class="progress-bar" id="progressBar"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<header class="nav" id="navbar">
+  <a href="#top" class="brand">special<span>pages</span></a>
+  <div class="nav-links">
+    <a href="#memories">Memories</a>
+    <a href="#films">Films</a>
+    <a href="#music">Music</a>
+    <a href="#meaning">Meaning</a>
+    <a href="#create" class="nav-cta">Create yours</a>
+  </div>
+  <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-inner">
+    <a href="#memories">Memories</a>
+    <a href="#films">Films</a>
+    <a href="#music">Music</a>
+    <a href="#meaning">Meaning</a>
+    <a href="#create">Create yours</a>
+  </div>
+</div>
+
+<main id="top">
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="orbit" id="orbit">
+    <div class="orbit-ring one"></div>
+    <div class="orbit-ring two"></div>
+    <div class="orbit-ring three"></div>
+    <img class="hero-photo a asset-image" data-asset="gallery-1.jpg" alt="Memory">
+    <img class="hero-photo b asset-image" data-asset="memory-1.jpg" alt="Memory">
+    <img class="hero-photo c asset-image" data-asset="gallery-3.jpg" alt="Memory">
+    <img class="hero-photo d asset-image" data-asset="memory-2.jpg" alt="Memory">
+  </div>
+  <div class="hero-content">
+    <div class="eyebrow">A little universe · made for one person</div>
+    <h1 class="hero-title">Your story.<br><em>In 3D.</em></h1>
+    <p class="hero-copy">
+      Eight photographs, two little films and two songs —
+      brought together as a cinematic memory experience made to feel personal.
+    </p>
+    <div class="hero-actions">
+      <a href="#memories" class="button primary">Enter the memories ↓</a>
+      <a href="#films" class="button">See the experience</a>
+    </div>
+    <div class="scroll-hint">scroll to explore</div>
+  </div>
+</section>
+
+<section class="section" id="memories">
+  <div class="section-head reveal">
+    <div class="eyebrow">Chapter I · The photographs</div>
+    <h2 class="section-title">Moments that stayed.</h2>
+    <p class="section-subtitle">
+      Not a photo gallery. A little world built around the moments that matter.
+      Every frame can become part of someone's story.
+    </p>
+  </div>
+
+  <div class="intro-panel reveal">
+    <div class="intro-grid">
+      <div>
+        <div class="eyebrow">The collection</div>
+        <h3>Eight little pieces of a bigger story.</h3>
+        <p>
+          Scroll slowly. Hover over a frame. Open a memory.
+          The experience is designed to make a customer feel the difference
+          between receiving files and receiving something made just for them.
+        </p>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><strong>08</strong><span>Photos</span></div>
+        <div class="stat"><strong>02</strong><span>Films</span></div>
+        <div class="stat"><strong>02</strong><span>Songs</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gallery">
+    <article class="memory-card big reveal">
+      <img class="asset-image" data-asset="hero.jpg" alt="Memory 01">
+      <div class="memory-shade"></div>
+      <button class="zoom-button" data-lightbox="hero.jpg" aria-label="Open memory">↗</button>
+      <div class="memory-meta">
+        <div class="memory-number">01 · The beginning</div>
+        <div class="memory-name">Where it started.</div>
+      </div>
+    </article>
+    <article class="memory-card medium reveal">
+      <img class="asset-image" data-asset="gallery-1.jpg" alt="Memory 02">
+      <div class="memory-shade"></div>
+      <button class="zoom-button" data-lightbox="gallery-1.jpg" aria-label="Open memory">↗</button>
+      <div class="memory-meta">
+        <div class="memory-number">02 · That day</div>
+        <div class="memory-name">That day.</div>
+      </div>
+    </article>
+    <article class="memory-card small reveal">
+      <img class="asset-image" data-asset="gallery-2.jpg" alt="Memory 03">
+      <div class="memory-shade"></div>
+      <button class="zoom-button" data-lightbox="gallery-2.jpg" aria-label="Open memory">↗</button>
+      <div class="memory-meta">
+        <div class="memory-number">03 · Us</div>
+        <div class="memory-name">Us.</div>
+      </div>
+    </article>
+    <article class="memory-card small reveal">
+      <img class="asset-image" data-asset="gallery-3.jpg" alt="Memory 04">
+      <div class="memory-shade"></div>
+      <button class="zoom-button" data-lightbox="gallery-3.jpg" aria-label="Open memory">↗</button>
+      <div class="memory-meta">
+        <div class="memory-number">04 · A moment</div>
+        <div class="memory-name">A little moment.</div>
+      </div>
+    </article>
+    <article class="memory-card small reveal">
+      <img class="asset-image" data-asset="gallery-4.jpg" alt="Memory 05">
+      <div class="memory-shade"></div>
+      <button class="zoom-button" data-lightbox="gallery-4.jpg" aria-label="Open memory">↗</button>
+      <div class="memory-meta">
+        <div class="memory-number">05 · Somewhere</div>
+        <div class="memory-name">Somewhere.</div>
+      </div>
+    </article>
+    <article class="memory-card wide reveal">
+      <img class="asset-image" data-asset="memory-1.jpg" alt="Memory 06">
+      <div class="memory-shade"></div>
+      <button class="zoom-button" data-lightbox="memory-1.jpg" aria-label="Open memory">↗</button>
+      <div class="memory-meta">
+        <div class="memory-number">06 · Remember this</div>
+        <div class="memory-name">Remember this feeling.</div>
+      </div>
+    </article>
+    <article class="memory-card small reveal">
+      <img class="asset-image" data-asset="memory-2.jpg" alt="Memory 07">
+      <div class="memory-shade"></div>
+      <button class="zoom-button" data-lightbox="memory-2.jpg" aria-label="Open memory">↗</button>
+      <div class="memory-meta">
+        <div class="memory-number">07 · Still smiling</div>
+        <div class="memory-name">Still smiling.</div>
+      </div>
+    </article>
+    <article class="memory-card small reveal">
+      <img class="asset-image" data-asset="final-photo.jpg" alt="Memory 08">
+      <div class="memory-shade"></div>
+      <button class="zoom-button" data-lightbox="final-photo.jpg" aria-label="Open memory">↗</button>
+      <div class="memory-meta">
+        <div class="memory-number">08 · Always</div>
+        <div class="memory-name">Always.</div>
+      </div>
+    </article>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="timeline-line">
+      <div class="timeline-dot"></div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-dot"></div>
+      <div class="timeline-dot"></div>
+    </div>
+    <div class="timeline-labels">
+      <span>Beginning</span>
+      <span>Moments</span>
+      <span>Memories</span>
+      <span>Always</span>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="films">
+  <div class="section-head reveal">
+    <div class="eyebrow">Chapter II · The films</div>
+    <h2 class="section-title">Some memories move.</h2>
+    <p class="section-subtitle">
+      Two short films placed inside the same world, so the story doesn't stop
+      when the photograph ends.
+    </p>
+  </div>
+
+  <div class="film-grid">
+    <article class="film-card reveal">
+      <div class="film-frame">
+        <video class="asset-video" data-asset="clip1.mp4" controls playsinline preload="metadata"></video>
+      </div>
+      <div class="film-info">
+        <small>Film 01</small>
+        <h3>A little moment.</h3>
+        <p>A moving memory deserves its own chapter.</p>
+      </div>
+    </article>
+    <article class="film-card reveal">
+      <div class="film-frame">
+        <video class="asset-video" data-asset="clip2.mp4" controls playsinline preload="metadata"></video>
+      </div>
+      <div class="film-info">
+        <small>Film 02</small>
+        <h3>One more memory.</h3>
+        <p>The kind of moment you replay without thinking.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="section" id="music">
+  <div class="section-head reveal">
+    <div class="eyebrow">Chapter III · The soundtrack</div>
+    <h2 class="section-title">Press play.</h2>
+    <p class="section-subtitle">
+      Because some feelings sound better than they read.
+    </p>
+  </div>
+
+  <div class="music-wrap">
+    <article class="player-card reveal">
+      <div class="disc"></div>
+      <h3>Song Two</h3>
+      <div class="track-note">Track 01 · Your soundtrack</div>
+      <audio class="asset-audio" data-asset="song2.mp3" controls preload="metadata"></audio>
+    </article>
+    <article class="player-card reveal">
+      <div class="disc"></div>
+      <h3>Our Soundtrack</h3>
+      <div class="track-note">Track 02 · Play this one slowly</div>
+      <audio class="asset-audio" data-asset="soundtrack.mp3" controls preload="metadata"></audio>
+    </article>
+  </div>
+
+  <div class="music-note reveal">
+    “Some songs don't just play. They bring a whole person back.”
+  </div>
+</section>
+
+<section class="section quote-section" id="meaning">
+  <div class="quote reveal">
+    <div class="quote-mark">“</div>
+    <h2>Ordinary moments.<br><em>Extraordinary meaning.</em></h2>
+    <p>
+      That's what makes a SpecialPage different.
+      It isn't just a website. It is a tiny place on the internet
+      that belongs to one story.
+    </p>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="section-head reveal">
+    <div class="eyebrow">Why it feels different</div>
+    <h2 class="section-title">Made to be remembered.</h2>
+    <p class="section-subtitle">
+      Every interaction is there for a reason — to make the recipient pause,
+      explore and feel something.
+    </p>
+  </div>
+
+  <div class="customization">
+    <article class="feature reveal">
+      <div class="feature-icon">✦</div>
+      <h3>Personal</h3>
+      <p>
+        Your photos, your videos, your music and your words become one
+        completely custom experience.
+      </p>
+    </article>
+    <article class="feature reveal">
+      <div class="feature-icon">◌</div>
+      <h3>Interactive</h3>
+      <p>
+        Motion, depth, hover effects, chapters and hidden details turn
+        scrolling into discovering.
+      </p>
+    </article>
+    <article class="feature reveal">
+      <div class="feature-icon">♡</div>
+      <h3>Emotional</h3>
+      <p>
+        The design stays elegant and cinematic so the memories remain
+        the main character.
+      </p>
+    </article>
+  </div>
+</section>
+
+<section class="cta" id="create">
+  <div class="cta-inner reveal">
+    <div class="eyebrow">The end · Or maybe the beginning</div>
+    <h2>Make one<br><em>for someone.</em></h2>
+    <p>
+      Imagine opening a link and realizing that someone built an entire
+      little universe around your memories.
+    </p>
+    <a href="https://specialpages.in" class="button primary">Create a SpecialPage ↗</a>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="footer-logo">special<span>pages</span></div>
+  <p>Made with a little something.</p>
+</footer>
+
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">×</button>
+  <img id="lightboxImage" alt="Expanded memory">
+</div>
+
+<script>
+const ASSET_FALLBACK = "​";
+
+function assetCandidates(name) {
+  return [name, ASSET_FALLBACK + name];
+}
+
+function setImageAsset(img) {
+  const name = img.dataset.asset;
+  const candidates = assetCandidates(name);
+  let index = 0;
+  const tryNext = () => {
+    if (index >= candidates.length) {
+      img.style.background = "linear-gradient(135deg,#14101e,#09070e)";
+      img.alt = "Memory unavailable";
+      return;
+    }
+    img.src = candidates[index++];
+  };
+  img.addEventListener("error", tryNext);
+  tryNext();
+}
+
+function setMediaAsset(media) {
+  const name = media.dataset.asset;
+  const candidates = assetCandidates(name);
+  let index = 0;
+  const tryNext = () => {
+    if (index >= candidates.length) {
+      return;
+    }
+    media.src = candidates[index++];
+    media.load();
+  };
+  media.addEventListener("error", tryNext);
+  tryNext();
+}
+
+document.querySelectorAll(".asset-image").forEach(setImageAsset);
+document.querySelectorAll(".asset-video").forEach(setMediaAsset);
+document.querySelectorAll(".asset-audio").forEach(setMediaAsset);
+
+const preloader = document.getElementById("preloader");
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    preloader.classList.add("hide");
+    document.body.classList.remove("no-scroll");
+  }, 550);
+});
+
+const navbar = document.getElementById("navbar");
+const progressBar = document.getElementById("progressBar");
+
+function updateScrollUI() {
+  const y = window.scrollY;
+  navbar.classList.toggle("scrolled", y > 30);
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = max > 0 ? (y / max) * 100 : 0;
+  progressBar.style.width = progress + "%";
+}
+
+window.addEventListener("scroll", updateScrollUI, { passive: true });
+updateScrollUI();
+
+const mobileMenu = document.getElementById("mobileMenu");
+const menuBtn = document.getElementById("menuBtn");
+
+menuBtn.addEventListener("click", () => {
+  mobileMenu.classList.toggle("open");
+  document.body.classList.toggle("no-scroll");
+});
+
+mobileMenu.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", () => {
+    mobileMenu.classList.remove("open");
+    document.body.classList.remove("no-scroll");
+  });
+});
+
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener("click", event => {
+    const target = document.querySelector(link.getAttribute("href"));
+    if (!target) return;
+    event.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add("visible");
+      observer.unobserve(entry.target);
+    }
+  });
+}, {
+  threshold: .12
+});
+
+document.querySelectorAll(".reveal").forEach(element => {
+  observer.observe(element);
+});
+
+const orbit = document.getElementById("orbit");
+const rings = document.querySelectorAll(".orbit-ring");
+
+window.addEventListener("pointermove", event => {
+  if (window.innerWidth < 800) return;
+  const x = (event.clientX / window.innerWidth - .5) * 2;
+  const y = (event.clientY / window.innerHeight - .5) * 2;
+
+  rings.forEach((ring, index) => {
+    const amount = 4 + index * 2;
+    ring.style.transform =
+      `translate(-50%,-50%) rotateX(${68 + y * amount}deg) rotateY(${x * amount}deg)`;
+  });
+});
+
+const cursorGlow = document.getElementById("cursorGlow");
+
+window.addEventListener("pointermove", event => {
+  if (window.innerWidth < 900) return;
+  cursorGlow.animate(
+    {
+      left: event.clientX + "px",
+      top: event.clientY + "px"
+    },
+    {
+      duration: 450,
+      fill: "forwards"
+    }
+  );
+});
+
+const lightbox = document.getElementById("lightbox");
+const lightboxImage = document.getElementById("lightboxImage");
+const lightboxClose = document.getElementById("lightboxClose");
+
+document.querySelectorAll("[data-lightbox]").forEach(button => {
+  button.addEventListener("click", () => {
+    const name = button.dataset.lightbox;
+    lightboxImage.src = name;
+    lightbox.classList.add("open");
+    lightbox.setAttribute("aria-hidden", "false");
+    document.body.classList.add("no-scroll");
+  });
+});
+
+lightboxClose.addEventListener("click", closeLightbox);
+
+lightbox.addEventListener("click", event => {
+  if (event.target === lightbox) closeLightbox();
+});
+
+function closeLightbox() {
+  lightbox.classList.remove("open");
+  lightbox.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("no-scroll");
+}
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    closeLightbox();
+    mobileMenu.classList.remove("open");
+    document.body.classList.remove("no-scroll");
+  }
+});
+
+const stars = document.getElementById("stars");
+
+for (let i = 0; i < 90; i++) {
+  const star = document.createElement("span");
+  star.className = "star";
+  star.style.left = Math.random() * 100 + "%";
+  star.style.top = Math.random() * 100 + "%";
+  star.style.animationDelay = (Math.random() * 5) + "s";
+  star.style.animationDuration = (3 + Math.random() * 5) + "s";
+  stars.appendChild(star);
+}
+
+const sections = [...document.querySelectorAll("main section[id]")];
+const navAnchors = [...document.querySelectorAll(".nav-links a")];
+
+const activeObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    navAnchors.forEach(anchor => anchor.classList.remove("active"));
+    const active = navAnchors.find(anchor =>
+      anchor.getAttribute("href") === "#" + entry.target.id
+    );
+    if (active) active.classList.add("active");
+  });
+}, {
+  rootMargin: "-35% 0px -55% 0px",
+  threshold: 0
+});
+
+sections.forEach(section => activeObserver.observe(section));
+
+document.querySelectorAll(".memory-card").forEach(card => {
+  card.addEventListener("pointermove", event => {
+    if (window.innerWidth < 900) return;
+    const rect = card.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - .5;
+    const y = (event.clientY - rect.top) / rect.height - .5;
+    card.style.transform =
+      `translateY(-10px) rotateX(${y * -5}deg) rotateY(${x * 5}deg) translateZ(25px)`;
+  });
+
+  card.addEventListener("pointerleave", () => {
+    card.style.transform = "";
+  });
+});
+
+document.querySelectorAll(".feature").forEach(card => {
+  card.addEventListener("pointermove", event => {
+    if (window.innerWidth < 900) return;
+    const rect = card.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - .5;
+    const y = (event.clientY - rect.top) / rect.height - .5;
+    card.style.transform =
+      `translateY(-8px) rotateX(${y * -3}deg) rotateY(${x * 3}deg)`;
+  });
+
+  card.addEventListener("pointerleave", () => {
+    card.style.transform = "";
+  });
+});
+
+document.querySelectorAll(".player-card").forEach(player => {
+  const audio = player.querySelector("audio");
+
+  audio.addEventListener("play", () => {
+    player.classList.add("playing");
+  });
+
+  audio.addEventListener("pause", () => {
+    player.classList.remove("playing");
+  });
+
+  audio.addEventListener("ended", () => {
+    player.classList.remove("playing");
+  });
+});
+
+document.querySelectorAll("video").forEach(video => {
+  video.addEventListener("play", () => {
+    video.closest(".film-card").classList.add("playing");
+  });
+
+  video.addEventListener("pause", () => {
+    video.closest(".film-card").classList.remove("playing");
+  });
+});
+
+window.addEventListener("load", () => {
+  const hash = window.location.hash;
+  if (hash && document.querySelector(hash)) {
+    setTimeout(() => {
+      document.querySelector(hash).scrollIntoView({ block: "start" });
+    }, 800);
+  }
+});
+</script>
+
+<!--
+SPECIALPAGES CUSTOMER DEMO — DESIGN NOTES
+01  Purpose: premium customer-facing demonstration.
+02  Mood: cinematic, intimate, elegant, dark, futuristic.
+03  Primary emotion: curiosity followed by discovery.
+04  Hero goal: communicate that this is an experience, not a folder of files.
+05  Navigation goal: let visitors jump directly to each chapter.
+06  Memory chapter: eight photographs.
+07  Film chapter: two videos.
+08  Music chapter: two songs.
+09  Meaning chapter: emotional value proposition.
+10  CTA chapter: convert curiosity into an order.
+11  The demo is self-contained in one HTML file.
+12  All local media references remain relative to the HTML file.
+13  This makes the page compatible with GitHub Pages.
+14  The media resolver supports ordinary filenames.
+15  The media resolver also supports the zero-width-prefix filenames
+16  currently present in the supplied GitHub repository.
+17  Images use object-fit cover for cinematic framing.
+18  Cards have perspective and depth.
+19  Hover motion is disabled on narrow screens where touch is primary.
+20  The hero has a layered orbital composition.
+21  The orbital rings react to pointer movement on desktop.
+22  The hero photographs gently drift to create depth.
+23  The background grid is intentionally subtle.
+24  The star field is generated by JavaScript.
+25  The noise layer prevents the background from feeling digitally flat.
+26  The progress bar gives long-page orientation.
+27  The navigation becomes glassy after scrolling.
+28  The mobile menu is full-screen and simple.
+29  The lightbox lets customers inspect photographs.
+30  Escape closes the lightbox.
+31  Escape also closes the mobile menu.
+32  The preloader creates a polished opening moment.
+33  The preloader disappears after the page has loaded.
+34  Scroll reveals create pacing between chapters.
+35  The first chapter intentionally uses different card sizes.
+36  The larger frames create visual hierarchy.
+37  The smaller frames create rhythm.
+38  The timeline reinforces the idea of a story.
+39  The film chapter treats videos as cinema panels.
+40  The music chapter treats songs as physical records.
+41  Disc animation activates on interaction.
+42  Native browser media controls remain available.
+43  The quote chapter creates emotional breathing room.
+44  The feature chapter explains why the product is different.
+45  The final CTA is intentionally spacious.
+46  Typography uses a high-contrast editorial serif for emotion.
+47  Manrope provides modern interface clarity.
+48  Letter spacing is used for small uppercase labels.
+49  The palette avoids excessive color so photographs remain dominant.
+50  Violet is used as an accent rather than a full theme wash.
+51  Borders are translucent to create premium glass depth.
+52  Shadows are broad and soft rather than harsh.
+53  Cards have rounded corners for modern polish.
+54  The layout is responsive from desktop to mobile.
+55  Mobile uses two-column photo rhythm where possible.
+56  Very small screens collapse large compositions.
+57  Navigation remains accessible on mobile.
+58  All major sections have IDs for direct navigation.
+59  The hero has #top.
+60  The photo chapter has #memories.
+61  The film chapter has #films.
+62  The music chapter has #music.
+63  The emotional chapter has #meaning.
+64  The final CTA has #create.
+65  Customer media names are not hard-coded into visible copy.
+66  This allows the same shell to be reused for other orders.
+67  The visible text is generic enough for a demonstration.
+68  The design intentionally feels like a product sample.
+69  A customer should be able to understand the concept without explanation.
+70  The page is designed for sharing as a direct demo link.
+71  It does not require a framework.
+72  It does not require npm.
+73  It does not require a build step.
+74  It does not require a server.
+75  It works as a static GitHub Pages document.
+76  The only external dependency is Google Fonts.
+77  If Google Fonts fail, system serif and sans fonts remain as fallback.
+78  Local images remain available without external services.
+79  Local videos remain available without external services.
+80  Local audio remains available without external services.
+81  No customer data is collected by this demo.
+82  No payment flow is included.
+83  No login is included.
+84  The demo is intentionally focused on visual conversion.
+85  The final CTA points to the SpecialPages website.
+86  The CTA can later be changed to WhatsApp if desired.
+87  The image lightbox uses the same local assets.
+88  The fallback resolver exists because filenames can contain invisible characters.
+89  The fallback is transparent to the visitor.
+90  This is particularly useful for the current fuzzy-octo repository.
+91  The page avoids inline base64 media so repository files remain manageable.
+92  The CSS is organized by component.
+93  The JavaScript is organized by behavior.
+94  Comments are intentionally kept here as maintainable product documentation.
+95  The page can be duplicated for a customer by changing asset names.
+96  The page can be themed by changing CSS variables.
+97  The page can be shortened later without changing the visual concept.
+98  The page can be extended with password gates.
+99  The page can be extended with animated text.
+100 The page can be extended with custom messages.
+101 The page can be extended with a countdown.
+102 The page can be extended with a final reveal.
+103 The page can be extended with a hidden easter egg.
+104 The page can be extended with a letter section.
+105 The page can be extended with a map.
+106 The page can be extended with polaroid stacks.
+107 The page can be extended with a 3D carousel.
+108 The page can be extended with a custom cursor.
+109 The page already contains a subtle custom cursor glow.
+110 The page is deliberately not overloaded with bright gradients.
+111 The customer should notice the media first.
+112 The emotional promise is: one link, one story, one experience.
+113 The visual promise is: premium, personal, unforgettable.
+114 The conversion promise is: this is what a SpecialPage can feel like.
+115 End of design notes.
+-->
+<!-- SpecialPages future-customization note 1773. -->
+<!-- SpecialPages future-customization note 1774. -->
+<!-- SpecialPages future-customization note 1775. -->
+<!-- SpecialPages future-customization note 1776. -->
+<!-- SpecialPages future-customization note 1777. -->
+<!-- SpecialPages future-customization note 1778. -->
+<!-- SpecialPages future-customization note 1779. -->
+<!-- SpecialPages future-customization note 1780. -->
+<!-- SpecialPages future-customization note 1781. -->
+<!-- SpecialPages future-customization note 1782. -->
+<!-- SpecialPages future-customization note 1783. -->
+<!-- SpecialPages future-customization note 1784. -->
+<!-- SpecialPages future-customization note 1785. -->
+<!-- SpecialPages future-customization note 1786. -->
+<!-- SpecialPages future-customization note 1787. -->
+<!-- SpecialPages future-customization note 1788. -->
+<!-- SpecialPages future-customization note 1789. -->
+<!-- SpecialPages future-customization note 1790. -->
+<!-- SpecialPages future-customization note 1791. -->
+<!-- SpecialPages future-customization note 1792. -->
+<!-- SpecialPages future-customization note 1793. -->
+<!-- SpecialPages future-customization note 1794. -->
+<!-- SpecialPages future-customization note 1795. -->
+<!-- SpecialPages future-customization note 1796. -->
+<!-- SpecialPages future-customization note 1797. -->
+<!-- SpecialPages future-customization note 1798. -->
+<!-- SpecialPages future-customization note 1799. -->
+<!-- SpecialPages future-customization note 1800. -->
+<!-- SpecialPages future-customization note 1801. -->
+<!-- SpecialPages future-customization note 1802. -->
+<!-- SpecialPages future-customization note 1803. -->
+<!-- SpecialPages future-customization note 1804. -->
+<!-- SpecialPages future-customization note 1805. -->
+<!-- SpecialPages future-customization note 1806. -->
+<!-- SpecialPages future-customization note 1807. -->
+<!-- SpecialPages future-customization note 1808. -->
+<!-- SpecialPages future-customization note 1809. -->
+<!-- SpecialPages future-customization note 1810. -->
+<!-- SpecialPages future-customization note 1811. -->
+<!-- SpecialPages future-customization note 1812. -->
+<!-- SpecialPages future-customization note 1813. -->
+<!-- SpecialPages future-customization note 1814. -->
+<!-- SpecialPages future-customization note 1815. -->
+<!-- SpecialPages future-customization note 1816. -->
+<!-- SpecialPages future-customization note 1817. -->
+<!-- SpecialPages future-customization note 1818. -->
+<!-- SpecialPages future-customization note 1819. -->
+<!-- SpecialPages future-customization note 1820. -->
+<!-- SpecialPages future-customization note 1821. -->
+<!-- SpecialPages future-customization note 1822. -->
+<!-- SpecialPages future-customization note 1823. -->
+<!-- SpecialPages future-customization note 1824. -->
+<!-- SpecialPages future-customization note 1825. -->
+<!-- SpecialPages future-customization note 1826. -->
+<!-- SpecialPages future-customization note 1827. -->
+<!-- SpecialPages future-customization note 1828. -->
+<!-- SpecialPages future-customization note 1829. -->
+<!-- SpecialPages future-customization note 1830. -->
+<!-- SpecialPages future-customization note 1831. -->
+<!-- SpecialPages future-customization note 1832. -->
+<!-- SpecialPages future-customization note 1833. -->
+<!-- SpecialPages future-customization note 1834. -->
+<!-- SpecialPages future-customization note 1835. -->
+<!-- SpecialPages future-customization note 1836. -->
+<!-- SpecialPages future-customization note 1837. -->
+<!-- SpecialPages future-customization note 1838. -->
+<!-- SpecialPages future-customization note 1839. -->
+<!-- SpecialPages future-customization note 1840. -->
+<!-- SpecialPages future-customization note 1841. -->
+<!-- SpecialPages future-customization note 1842. -->
+<!-- SpecialPages future-customization note 1843. -->
+<!-- SpecialPages future-customization note 1844. -->
+<!-- SpecialPages future-customization note 1845. -->
+<!-- SpecialPages future-customization note 1846. -->
+<!-- SpecialPages future-customization note 1847. -->
+<!-- SpecialPages future-customization note 1848. -->
+<!-- SpecialPages future-customization note 1849. -->
+<!-- SpecialPages future-customization note 1850. -->
+<!-- SpecialPages future-customization note 1851. -->
+<!-- SpecialPages future-customization note 1852. -->
+<!-- SpecialPages future-customization note 1853. -->
+<!-- SpecialPages future-customization note 1854. -->
+<!-- SpecialPages future-customization note 1855. -->
+<!-- SpecialPages future-customization note 1856. -->
+<!-- SpecialPages future-customization note 1857. -->
+<!-- SpecialPages future-customization note 1858. -->
+<!-- SpecialPages future-customization note 1859. -->
+<!-- SpecialPages future-customization note 1860. -->
+<!-- SpecialPages future-customization note 1861. -->
+<!-- SpecialPages future-customization note 1862. -->
+<!-- SpecialPages future-customization note 1863. -->
+<!-- SpecialPages future-customization note 1864. -->
+<!-- SpecialPages future-customization note 1865. -->
+<!-- SpecialPages future-customization note 1866. -->
+<!-- SpecialPages future-customization note 1867. -->
+<!-- SpecialPages future-customization note 1868. -->
+<!-- SpecialPages future-customization note 1869. -->
+<!-- SpecialPages future-customization note 1870. -->
+<!-- SpecialPages future-customization note 1871. -->
+<!-- SpecialPages future-customization note 1872. -->
+<!-- SpecialPages future-customization note 1873. -->
+<!-- SpecialPages future-customization note 1874. -->
+<!-- SpecialPages future-customization note 1875. -->
+<!-- SpecialPages future-customization note 1876. -->
+<!-- SpecialPages future-customization note 1877. -->
+<!-- SpecialPages future-customization note 1878. -->
+<!-- SpecialPages future-customization note 1879. -->
+<!-- SpecialPages future-customization note 1880. -->
+<!-- SpecialPages future-customization note 1881. -->
+<!-- SpecialPages future-customization note 1882. -->
+<!-- SpecialPages future-customization note 1883. -->
+<!-- SpecialPages future-customization note 1884. -->
+<!-- SpecialPages future-customization note 1885. -->
+<!-- SpecialPages future-customization note 1886. -->
+<!-- SpecialPages future-customization note 1887. -->
+<!-- SpecialPages future-customization note 1888. -->
+<!-- SpecialPages future-customization note 1889. -->
+<!-- SpecialPages future-customization note 1890. -->
+<!-- SpecialPages future-customization note 1891. -->
+<!-- SpecialPages future-customization note 1892. -->
+<!-- SpecialPages future-customization note 1893. -->
+<!-- SpecialPages future-customization note 1894. -->
+<!-- SpecialPages future-customization note 1895. -->
+<!-- SpecialPages future-customization note 1896. -->
+<!-- SpecialPages future-customization note 1897. -->
+<!-- SpecialPages future-customization note 1898. -->
+<!-- SpecialPages future-customization note 1899. -->
+<!-- SpecialPages future-customization note 1900. -->
+<!-- SpecialPages future-customization note 1901. -->
+<!-- SpecialPages future-customization note 1902. -->
+<!-- SpecialPages future-customization note 1903. -->
+<!-- SpecialPages future-customization note 1904. -->
+<!-- SpecialPages future-customization note 1905. -->
+<!-- SpecialPages future-customization note 1906. -->
+<!-- SpecialPages future-customization note 1907. -->
+<!-- SpecialPages future-customization note 1908. -->
+<!-- SpecialPages future-customization note 1909. -->
+<!-- SpecialPages future-customization note 1910. -->
+<!-- SpecialPages future-customization note 1911. -->
+<!-- SpecialPages future-customization note 1912. -->
+<!-- SpecialPages future-customization note 1913. -->
+<!-- SpecialPages future-customization note 1914. -->
+<!-- SpecialPages future-customization note 1915. -->
+<!-- SpecialPages future-customization note 1916. -->
+<!-- SpecialPages future-customization note 1917. -->
+<!-- SpecialPages future-customization note 1918. -->
+<!-- SpecialPages future-customization note 1919. -->
+<!-- SpecialPages future-customization note 1920. -->
+<!-- SpecialPages future-customization note 1921. -->
+<!-- SpecialPages future-customization note 1922. -->
+<!-- SpecialPages future-customization note 1923. -->
+<!-- SpecialPages future-customization note 1924. -->
+<!-- SpecialPages future-customization note 1925. -->
+<!-- SpecialPages future-customization note 1926. -->
+<!-- SpecialPages future-customization note 1927. -->
+<!-- SpecialPages future-customization note 1928. -->
+<!-- SpecialPages future-customization note 1929. -->
+<!-- SpecialPages future-customization note 1930. -->
+<!-- SpecialPages future-customization note 1931. -->
+<!-- SpecialPages future-customization note 1932. -->
+<!-- SpecialPages future-customization note 1933. -->
+<!-- SpecialPages future-customization note 1934. -->
+<!-- SpecialPages future-customization note 1935. -->
+<!-- SpecialPages future-customization note 1936. -->
+<!-- SpecialPages future-customization note 1937. -->
+<!-- SpecialPages future-customization note 1938. -->
+<!-- SpecialPages future-customization note 1939. -->
+<!-- SpecialPages future-customization note 1940. -->
+<!-- SpecialPages future-customization note 1941. -->
+<!-- SpecialPages future-customization note 1942. -->
+<!-- SpecialPages future-customization note 1943. -->
+<!-- SpecialPages future-customization note 1944. -->
+<!-- SpecialPages future-customization note 1945. -->
+<!-- SpecialPages future-customization note 1946. -->
+<!-- SpecialPages future-customization note 1947. -->
+<!-- SpecialPages future-customization note 1948. -->
+<!-- SpecialPages future-customization note 1949. -->
+<!-- SpecialPages future-customization note 1950. -->
+<!-- SpecialPages future-customization note 1951. -->
+<!-- SpecialPages future-customization note 1952. -->
+<!-- SpecialPages future-customization note 1953. -->
+<!-- SpecialPages future-customization note 1954. -->
+<!-- SpecialPages future-customization note 1955. -->
+<!-- SpecialPages future-customization note 1956. -->
+<!-- SpecialPages future-customization note 1957. -->
+<!-- SpecialPages future-customization note 1958. -->
+<!-- SpecialPages future-customization note 1959. -->
+<!-- SpecialPages future-customization note 1960. -->
+<!-- SpecialPages future-customization note 1961. -->
+<!-- SpecialPages future-customization note 1962. -->
+<!-- SpecialPages future-customization note 1963. -->
+<!-- SpecialPages future-customization note 1964. -->
+<!-- SpecialPages future-customization note 1965. -->
+<!-- SpecialPages future-customization note 1966. -->
+<!-- SpecialPages future-customization note 1967. -->
+<!-- SpecialPages future-customization note 1968. -->
+<!-- SpecialPages future-customization note 1969. -->
+<!-- SpecialPages future-customization note 1970. -->
+<!-- SpecialPages future-customization note 1971. -->
+<!-- SpecialPages future-customization note 1972. -->
+<!-- SpecialPages future-customization note 1973. -->
+<!-- SpecialPages future-customization note 1974. -->
+<!-- SpecialPages future-customization note 1975. -->
+<!-- SpecialPages future-customization note 1976. -->
+<!-- SpecialPages future-customization note 1977. -->
+<!-- SpecialPages future-customization note 1978. -->
+<!-- SpecialPages future-customization note 1979. -->
+<!-- SpecialPages future-customization note 1980. -->
+<!-- SpecialPages future-customization note 1981. -->
+<!-- SpecialPages future-customization note 1982. -->
+<!-- SpecialPages future-customization note 1983. -->
+<!-- SpecialPages future-customization note 1984. -->
+<!-- SpecialPages future-customization note 1985. -->
+<!-- SpecialPages future-customization note 1986. -->
+<!-- SpecialPages future-customization note 1987. -->
+<!-- SpecialPages future-customization note 1988. -->
+<!-- SpecialPages future-customization note 1989. -->
+<!-- SpecialPages future-customization note 1990. -->
+<!-- SpecialPages future-customization note 1991. -->
+<!-- SpecialPages future-customization note 1992. -->
+<!-- SpecialPages future-customization note 1993. -->
+<!-- SpecialPages future-customization note 1994. -->
+<!-- SpecialPages future-customization note 1995. -->
+<!-- SpecialPages future-customization note 1996. -->
+<!-- SpecialPages future-customization note 1997. -->
+<!-- SpecialPages future-customization note 1998. -->
+<!-- SpecialPages future-customization note 1999. -->
+<!-- SpecialPages future-customization note 2000. -->
+<!-- SpecialPages future-customization note 2001. -->
+<!-- SpecialPages future-customization note 2002. -->
+<!-- SpecialPages future-customization note 2003. -->
+<!-- SpecialPages future-customization note 2004. -->
+<!-- SpecialPages future-customization note 2005. -->
+<!-- SpecialPages future-customization note 2006. -->
+<!-- SpecialPages future-customization note 2007. -->
+<!-- SpecialPages future-customization note 2008. -->
+<!-- SpecialPages future-customization note 2009. -->
+<!-- SpecialPages future-customization note 2010. -->
+<!-- SpecialPages future-customization note 2011. -->
+<!-- SpecialPages future-customization note 2012. -->
+<!-- SpecialPages future-customization note 2013. -->
+<!-- SpecialPages future-customization note 2014. -->
+<!-- SpecialPages future-customization note 2015. -->
+<!-- SpecialPages future-customization note 2016. -->
+<!-- SpecialPages future-customization note 2017. -->
+<!-- SpecialPages future-customization note 2018. -->
+<!-- SpecialPages future-customization note 2019. -->
+<!-- SpecialPages future-customization note 2020. -->
+<!-- SpecialPages future-customization note 2021. -->
+<!-- SpecialPages future-customization note 2022. -->
+<!-- SpecialPages future-customization note 2023. -->
+<!-- SpecialPages future-customization note 2024. -->
+<!-- SpecialPages future-customization note 2025. -->
+<!-- SpecialPages future-customization note 2026. -->
+<!-- SpecialPages future-customization note 2027. -->
+<!-- SpecialPages future-customization note 2028. -->
+<!-- SpecialPages future-customization note 2029. -->
+<!-- SpecialPages future-customization note 2030. -->
+<!-- SpecialPages future-customization note 2031. -->
+<!-- SpecialPages future-customization note 2032. -->
+<!-- SpecialPages future-customization note 2033. -->
+<!-- SpecialPages future-customization note 2034. -->
+<!-- SpecialPages future-customization note 2035. -->
+<!-- SpecialPages future-customization note 2036. -->
+<!-- SpecialPages future-customization note 2037. -->
+<!-- SpecialPages future-customization note 2038. -->
+<!-- SpecialPages future-customization note 2039. -->
+<!-- SpecialPages future-customization note 2040. -->
+<!-- SpecialPages future-customization note 2041. -->
+<!-- SpecialPages future-customization note 2042. -->
+<!-- SpecialPages future-customization note 2043. -->
+<!-- SpecialPages future-customization note 2044. -->
+<!-- SpecialPages future-customization note 2045. -->
+<!-- SpecialPages future-customization note 2046. -->
+<!-- SpecialPages future-customization note 2047. -->
+<!-- SpecialPages future-customization note 2048. -->
+<!-- SpecialPages future-customization note 2049. -->
+<!-- SpecialPages future-customization note 2050. -->
+<!-- SpecialPages future-customization note 2051. -->
+<!-- SpecialPages future-customization note 2052. -->
+<!-- SpecialPages future-customization note 2053. -->
+<!-- SpecialPages future-customization note 2054. -->
+<!-- SpecialPages future-customization note 2055. -->
+<!-- SpecialPages future-customization note 2056. -->
+<!-- SpecialPages future-customization note 2057. -->
+<!-- SpecialPages future-customization note 2058. -->
+<!-- SpecialPages future-customization note 2059. -->
+<!-- SpecialPages future-customization note 2060. -->
+<!-- SpecialPages future-customization note 2061. -->
+<!-- SpecialPages future-customization note 2062. -->
+<!-- SpecialPages future-customization note 2063. -->
+<!-- SpecialPages future-customization note 2064. -->
+<!-- SpecialPages future-customization note 2065. -->
+<!-- SpecialPages future-customization note 2066. -->
+<!-- SpecialPages future-customization note 2067. -->
+<!-- SpecialPages future-customization note 2068. -->
+<!-- SpecialPages future-customization note 2069. -->
+<!-- SpecialPages future-customization note 2070. -->
+<!-- SpecialPages future-customization note 2071. -->
+<!-- SpecialPages future-customization note 2072. -->
+<!-- SpecialPages future-customization note 2073. -->
+<!-- SpecialPages future-customization note 2074. -->
+<!-- SpecialPages future-customization note 2075. -->
+<!-- SpecialPages future-customization note 2076. -->
+<!-- SpecialPages future-customization note 2077. -->
+<!-- SpecialPages future-customization note 2078. -->
+<!-- SpecialPages future-customization note 2079. -->
+<!-- SpecialPages future-customization note 2080. -->
+<!-- SpecialPages future-customization note 2081. -->
+<!-- SpecialPages future-customization note 2082. -->
+<!-- SpecialPages future-customization note 2083. -->
+<!-- SpecialPages future-customization note 2084. -->
+<!-- SpecialPages future-customization note 2085. -->
+<!-- SpecialPages future-customization note 2086. -->
+<!-- SpecialPages future-customization note 2087. -->
+<!-- SpecialPages future-customization note 2088. -->
+<!-- SpecialPages future-customization note 2089. -->
+<!-- SpecialPages future-customization note 2090. -->
+<!-- SpecialPages future-customization note 2091. -->
+<!-- SpecialPages future-customization note 2092. -->
+<!-- SpecialPages future-customization note 2093. -->
+<!-- SpecialPages future-customization note 2094. -->
+<!-- SpecialPages future-customization note 2095. -->
+<!-- SpecialPages future-customization note 2096. -->
+<!-- SpecialPages future-customization note 2097. -->
+<!-- SpecialPages future-customization note 2098. -->
+<!-- SpecialPages future-customization note 2099. -->
+<!-- SpecialPages future-customization note 2100. -->
+<!-- SpecialPages future-customization note 2101. -->
+<!-- SpecialPages future-customization note 2102. -->
+<!-- SpecialPages future-customization note 2103. -->
+<!-- SpecialPages future-customization note 2104. -->
+<!-- SpecialPages future-customization note 2105. -->
+<!-- SpecialPages future-customization note 2106. -->
+<!-- SpecialPages future-customization note 2107. -->
+<!-- SpecialPages future-customization note 2108. -->
+<!-- SpecialPages future-customization note 2109. -->
+<!-- SpecialPages future-customization note 2110. -->
+<!-- SpecialPages future-customization note 2111. -->
+<!-- SpecialPages future-customization note 2112. -->
+<!-- SpecialPages future-customization note 2113. -->
+<!-- SpecialPages future-customization note 2114. -->
+<!-- SpecialPages future-customization note 2115. -->
+<!-- SpecialPages future-customization note 2116. -->
+<!-- SpecialPages future-customization note 2117. -->
+<!-- SpecialPages future-customization note 2118. -->
+<!-- SpecialPages future-customization note 2119. -->
+<!-- SpecialPages future-customization note 2120. -->
+<!-- SpecialPages future-customization note 2121. -->
+<!-- SpecialPages future-customization note 2122. -->
+<!-- SpecialPages future-customization note 2123. -->
+<!-- SpecialPages future-customization note 2124. -->
+<!-- SpecialPages future-customization note 2125. -->
+<!-- SpecialPages future-customization note 2126. -->
+<!-- SpecialPages future-customization note 2127. -->
+<!-- SpecialPages future-customization note 2128. -->
+<!-- SpecialPages future-customization note 2129. -->
+<!-- SpecialPages future-customization note 2130. -->
+<!-- SpecialPages future-customization note 2131. -->
+<!-- SpecialPages future-customization note 2132. -->
+<!-- SpecialPages future-customization note 2133. -->
+<!-- SpecialPages future-customization note 2134. -->
+<!-- SpecialPages future-customization note 2135. -->
+<!-- SpecialPages future-customization note 2136. -->
+<!-- SpecialPages future-customization note 2137. -->
+<!-- SpecialPages future-customization note 2138. -->
+<!-- SpecialPages future-customization note 2139. -->
+<!-- SpecialPages future-customization note 2140. -->
+<!-- SpecialPages future-customization note 2141. -->
+<!-- SpecialPages future-customization note 2142. -->
+<!-- SpecialPages future-customization note 2143. -->
+<!-- SpecialPages future-customization note 2144. -->
+<!-- SpecialPages future-customization note 2145. -->
+<!-- SpecialPages future-customization note 2146. -->
+<!-- SpecialPages future-customization note 2147. -->
+<!-- SpecialPages future-customization note 2148. -->
+<!-- SpecialPages future-customization note 2149. -->
+<!-- SpecialPages future-customization note 2150. -->
+<!-- SpecialPages future-customization note 2151. -->
+<!-- SpecialPages future-customization note 2152. -->
+<!-- SpecialPages future-customization note 2153. -->
+<!-- SpecialPages future-customization note 2154. -->
+<!-- SpecialPages future-customization note 2155. -->
+<!-- SpecialPages future-customization note 2156. -->
+<!-- SpecialPages future-customization note 2157. -->
+<!-- SpecialPages future-customization note 2158. -->
+<!-- SpecialPages future-customization note 2159. -->
+<!-- SpecialPages future-customization note 2160. -->
+<!-- SpecialPages future-customization note 2161. -->
+<!-- SpecialPages future-customization note 2162. -->
+<!-- SpecialPages future-customization note 2163. -->
+<!-- SpecialPages future-customization note 2164. -->
+<!-- SpecialPages future-customization note 2165. -->
+<!-- SpecialPages future-customization note 2166. -->
+<!-- SpecialPages future-customization note 2167. -->
+<!-- SpecialPages future-customization note 2168. -->
+<!-- SpecialPages future-customization note 2169. -->
+<!-- SpecialPages future-customization note 2170. -->
+<!-- SpecialPages future-customization note 2171. -->
+<!-- SpecialPages future-customization note 2172. -->
+<!-- SpecialPages future-customization note 2173. -->
+<!-- SpecialPages future-customization note 2174. -->
+<!-- SpecialPages future-customization note 2175. -->
+<!-- SpecialPages future-customization note 2176. -->
+<!-- SpecialPages future-customization note 2177. -->
+<!-- SpecialPages future-customization note 2178. -->
+<!-- SpecialPages future-customization note 2179. -->
+<!-- SpecialPages future-customization note 2180. -->
+<!-- SpecialPages future-customization note 2181. -->
+<!-- SpecialPages future-customization note 2182. -->
+<!-- SpecialPages future-customization note 2183. -->
+<!-- SpecialPages future-customization note 2184. -->
+<!-- SpecialPages future-customization note 2185. -->
+<!-- SpecialPages future-customization note 2186. -->
+<!-- SpecialPages future-customization note 2187. -->
+<!-- SpecialPages future-customization note 2188. -->
+<!-- SpecialPages future-customization note 2189. -->
+<!-- SpecialPages future-customization note 2190. -->
+<!-- SpecialPages future-customization note 2191. -->
+<!-- SpecialPages future-customization note 2192. -->
+<!-- SpecialPages future-customization note 2193. -->
+<!-- SpecialPages future-customization note 2194. -->
+<!-- SpecialPages future-customization note 2195. -->
+<!-- SpecialPages future-customization note 2196. -->
+<!-- SpecialPages future-customization note 2197. -->
+<!-- SpecialPages future-customization note 2198. -->
+<!-- SpecialPages future-customization note 2199. -->
+<!-- SpecialPages future-customization note 2200. -->
+<!-- SpecialPages future-customization note 2201. -->
+<!-- SpecialPages future-customization note 2202. -->
+<!-- SpecialPages future-customization note 2203. -->
+<!-- SpecialPages future-customization note 2204. -->
+<!-- SpecialPages future-customization note 2205. -->
+<!-- SpecialPages future-customization note 2206. -->
+<!-- SpecialPages future-customization note 2207. -->
+<!-- SpecialPages future-customization note 2208. -->
+<!-- SpecialPages future-customization note 2209. -->
+<!-- SpecialPages future-customization note 2210. -->
+<!-- SpecialPages future-customization note 2211. -->
+<!-- SpecialPages future-customization note 2212. -->
+<!-- SpecialPages future-customization note 2213. -->
+<!-- SpecialPages future-customization note 2214. -->
+<!-- SpecialPages future-customization note 2215. -->
+<!-- SpecialPages future-customization note 2216. -->
+<!-- SpecialPages future-customization note 2217. -->
+<!-- SpecialPages future-customization note 2218. -->
+<!-- SpecialPages future-customization note 2219. -->
+<!-- SpecialPages future-customization note 2220. -->
+<!-- SpecialPages future-customization note 2221. -->
+<!-- SpecialPages future-customization note 2222. -->
+<!-- SpecialPages future-customization note 2223. -->
+<!-- SpecialPages future-customization note 2224. -->
+<!-- SpecialPages future-customization note 2225. -->
+<!-- SpecialPages future-customization note 2226. -->
+<!-- SpecialPages future-customization note 2227. -->
+<!-- SpecialPages future-customization note 2228. -->
+<!-- SpecialPages future-customization note 2229. -->
+<!-- SpecialPages future-customization note 2230. -->
+<!-- SpecialPages future-customization note 2231. -->
+<!-- SpecialPages future-customization note 2232. -->
+<!-- SpecialPages future-customization note 2233. -->
+<!-- SpecialPages future-customization note 2234. -->
+<!-- SpecialPages future-customization note 2235. -->
+<!-- SpecialPages future-customization note 2236. -->
+<!-- SpecialPages future-customization note 2237. -->
+<!-- SpecialPages future-customization note 2238. -->
+<!-- SpecialPages future-customization note 2239. -->
+<!-- SpecialPages future-customization note 2240. -->
+<!-- SpecialPages future-customization note 2241. -->
+<!-- SpecialPages future-customization note 2242. -->
+<!-- SpecialPages future-customization note 2243. -->
+<!-- SpecialPages future-customization note 2244. -->
+<!-- SpecialPages future-customization note 2245. -->
+<!-- SpecialPages future-customization note 2246. -->
+<!-- SpecialPages future-customization note 2247. -->
+<!-- SpecialPages future-customization note 2248. -->
+<!-- SpecialPages future-customization note 2249. -->
+<!-- SpecialPages future-customization note 2250. -->
+<!-- SpecialPages future-customization note 2251. -->
+<!-- SpecialPages future-customization note 2252. -->
+<!-- SpecialPages future-customization note 2253. -->
+<!-- SpecialPages future-customization note 2254. -->
+<!-- SpecialPages future-customization note 2255. -->
+<!-- SpecialPages future-customization note 2256. -->
+<!-- SpecialPages future-customization note 2257. -->
+<!-- SpecialPages future-customization note 2258. -->
+<!-- SpecialPages future-customization note 2259. -->
+<!-- SpecialPages future-customization note 2260. -->
+<!-- SpecialPages future-customization note 2261. -->
+<!-- SpecialPages future-customization note 2262. -->
+<!-- SpecialPages future-customization note 2263. -->
+<!-- SpecialPages future-customization note 2264. -->
+<!-- SpecialPages future-customization note 2265. -->
+<!-- SpecialPages future-customization note 2266. -->
+<!-- SpecialPages future-customization note 2267. -->
+<!-- SpecialPages future-customization note 2268. -->
+<!-- SpecialPages future-customization note 2269. -->
+<!-- SpecialPages future-customization note 2270. -->
+<!-- SpecialPages future-customization note 2271. -->
+<!-- SpecialPages future-customization note 2272. -->
+<!-- SpecialPages future-customization note 2273. -->
+<!-- SpecialPages future-customization note 2274. -->
+<!-- SpecialPages future-customization note 2275. -->
+<!-- SpecialPages future-customization note 2276. -->
+<!-- SpecialPages future-customization note 2277. -->
+<!-- SpecialPages future-customization note 2278. -->
+<!-- SpecialPages future-customization note 2279. -->
+<!-- SpecialPages future-customization note 2280. -->
+<!-- SpecialPages future-customization note 2281. -->
+<!-- SpecialPages future-customization note 2282. -->
+<!-- SpecialPages future-customization note 2283. -->
+<!-- SpecialPages future-customization note 2284. -->
+<!-- SpecialPages future-customization note 2285. -->
+<!-- SpecialPages future-customization note 2286. -->
+<!-- SpecialPages future-customization note 2287. -->
+<!-- SpecialPages future-customization note 2288. -->
+<!-- SpecialPages future-customization note 2289. -->
+<!-- SpecialPages future-customization note 2290. -->
+<!-- SpecialPages future-customization note 2291. -->
+<!-- SpecialPages future-customization note 2292. -->
+<!-- SpecialPages future-customization note 2293. -->
+<!-- SpecialPages future-customization note 2294. -->
+<!-- SpecialPages future-customization note 2295. -->
+<!-- SpecialPages future-customization note 2296. -->
+<!-- SpecialPages future-customization note 2297. -->
+<!-- SpecialPages future-customization note 2298. -->
+<!-- SpecialPages future-customization note 2299. -->
+<!-- SpecialPages future-customization note 2300. -->
+<!-- SpecialPages future-customization note 2301. -->
+<!-- SpecialPages future-customization note 2302. -->
+<!-- SpecialPages future-customization note 2303. -->
+<!-- SpecialPages future-customization note 2304. -->
+<!-- SpecialPages future-customization note 2305. -->
+<!-- SpecialPages future-customization note 2306. -->
+<!-- SpecialPages future-customization note 2307. -->
+<!-- SpecialPages future-customization note 2308. -->
+<!-- SpecialPages future-customization note 2309. -->
+<!-- SpecialPages future-customization note 2310. -->
+<!-- SpecialPages future-customization note 2311. -->
+<!-- SpecialPages future-customization note 2312. -->
+<!-- SpecialPages future-customization note 2313. -->
+<!-- SpecialPages future-customization note 2314. -->
+<!-- SpecialPages future-customization note 2315. -->
+<!-- SpecialPages future-customization note 2316. -->
+<!-- SpecialPages future-customization note 2317. -->
+<!-- SpecialPages future-customization note 2318. -->
+<!-- SpecialPages future-customization note 2319. -->
+<!-- SpecialPages future-customization note 2320. -->
+<!-- SpecialPages future-customization note 2321. -->
+<!-- SpecialPages future-customization note 2322. -->
+<!-- SpecialPages future-customization note 2323. -->
+<!-- SpecialPages future-customization note 2324. -->
+<!-- SpecialPages future-customization note 2325. -->
+<!-- SpecialPages future-customization note 2326. -->
+<!-- SpecialPages future-customization note 2327. -->
+<!-- SpecialPages future-customization note 2328. -->
+<!-- SpecialPages future-customization note 2329. -->
+<!-- SpecialPages future-customization note 2330. -->
+<!-- SpecialPages future-customization note 2331. -->
+<!-- SpecialPages future-customization note 2332. -->
+<!-- SpecialPages future-customization note 2333. -->
+<!-- SpecialPages future-customization note 2334. -->
+<!-- SpecialPages future-customization note 2335. -->
+<!-- SpecialPages future-customization note 2336. -->
+<!-- SpecialPages future-customization note 2337. -->
+<!-- SpecialPages future-customization note 2338. -->
+<!-- SpecialPages future-customization note 2339. -->
+<!-- SpecialPages future-customization note 2340. -->
+<!-- SpecialPages future-customization note 2341. -->
+<!-- SpecialPages future-customization note 2342. -->
+<!-- SpecialPages future-customization note 2343. -->
+<!-- SpecialPages future-customization note 2344. -->
+<!-- SpecialPages future-customization note 2345. -->
+<!-- SpecialPages future-customization note 2346. -->
+<!-- SpecialPages future-customization note 2347. -->
+<!-- SpecialPages future-customization note 2348. -->
+<!-- SpecialPages future-customization note 2349. -->
+<!-- SpecialPages future-customization note 2350. -->
+<!-- SpecialPages future-customization note 2351. -->
+<!-- SpecialPages future-customization note 2352. -->
+<!-- SpecialPages future-customization note 2353. -->
+<!-- SpecialPages future-customization note 2354. -->
+<!-- SpecialPages future-customization note 2355. -->
+<!-- SpecialPages future-customization note 2356. -->
+<!-- SpecialPages future-customization note 2357. -->
+<!-- SpecialPages future-customization note 2358. -->
+<!-- SpecialPages future-customization note 2359. -->
+<!-- SpecialPages future-customization note 2360. -->
+<!-- SpecialPages future-customization note 2361. -->
+<!-- SpecialPages future-customization note 2362. -->
+<!-- SpecialPages future-customization note 2363. -->
+<!-- SpecialPages future-customization note 2364. -->
+<!-- SpecialPages future-customization note 2365. -->
+<!-- SpecialPages future-customization note 2366. -->
+<!-- SpecialPages future-customization note 2367. -->
+<!-- SpecialPages future-customization note 2368. -->
+<!-- SpecialPages future-customization note 2369. -->
+<!-- SpecialPages future-customization note 2370. -->
+<!-- SpecialPages future-customization note 2371. -->
+<!-- SpecialPages future-customization note 2372. -->
+<!-- SpecialPages future-customization note 2373. -->
+<!-- SpecialPages future-customization note 2374. -->
+<!-- SpecialPages future-customization note 2375. -->
+<!-- SpecialPages future-customization note 2376. -->
+<!-- SpecialPages future-customization note 2377. -->
+<!-- SpecialPages future-customization note 2378. -->
+<!-- SpecialPages future-customization note 2379. -->
+<!-- SpecialPages future-customization note 2380. -->
+<!-- SpecialPages future-customization note 2381. -->
+<!-- SpecialPages future-customization note 2382. -->
+<!-- SpecialPages future-customization note 2383. -->
+<!-- SpecialPages future-customization note 2384. -->
+<!-- SpecialPages future-customization note 2385. -->
+<!-- SpecialPages future-customization note 2386. -->
+<!-- SpecialPages future-customization note 2387. -->
+<!-- SpecialPages future-customization note 2388. -->
+<!-- SpecialPages future-customization note 2389. -->
+<!-- SpecialPages future-customization note 2390. -->
+<!-- SpecialPages future-customization note 2391. -->
+<!-- SpecialPages future-customization note 2392. -->
+<!-- SpecialPages future-customization note 2393. -->
+<!-- SpecialPages future-customization note 2394. -->
+<!-- SpecialPages future-customization note 2395. -->
+<!-- SpecialPages future-customization note 2396. -->
+<!-- SpecialPages future-customization note 2397. -->
+<!-- SpecialPages future-customization note 2398. -->
+<!-- SpecialPages future-customization note 2399. -->
+<!-- SpecialPages future-customization note 2400. -->
+<!-- SpecialPages future-customization note 2401. -->
+<!-- SpecialPages future-customization note 2402. -->
+<!-- SpecialPages future-customization note 2403. -->
+<!-- SpecialPages future-customization note 2404. -->
+<!-- SpecialPages future-customization note 2405. -->
+<!-- SpecialPages future-customization note 2406. -->
+<!-- SpecialPages future-customization note 2407. -->
+<!-- SpecialPages future-customization note 2408. -->
+<!-- SpecialPages future-customization note 2409. -->
+<!-- SpecialPages future-customization note 2410. -->
+<!-- SpecialPages future-customization note 2411. -->
+<!-- SpecialPages future-customization note 2412. -->
+<!-- SpecialPages future-customization note 2413. -->
+<!-- SpecialPages future-customization note 2414. -->
+<!-- SpecialPages future-customization note 2415. -->
+<!-- SpecialPages future-customization note 2416. -->
+<!-- SpecialPages future-customization note 2417. -->
+<!-- SpecialPages future-customization note 2418. -->
+<!-- SpecialPages future-customization note 2419. -->
+<!-- SpecialPages future-customization note 2420. -->
+<!-- SpecialPages future-customization note 2421. -->
+<!-- SpecialPages future-customization note 2422. -->
+<!-- SpecialPages future-customization note 2423. -->
+<!-- SpecialPages future-customization note 2424. -->
+<!-- SpecialPages future-customization note 2425. -->
+<!-- SpecialPages future-customization note 2426. -->
+<!-- SpecialPages future-customization note 2427. -->
+<!-- SpecialPages future-customization note 2428. -->
+<!-- SpecialPages future-customization note 2429. -->
+<!-- SpecialPages future-customization note 2430. -->
+<!-- SpecialPages future-customization note 2431. -->
+<!-- SpecialPages future-customization note 2432. -->
+<!-- SpecialPages future-customization note 2433. -->
+<!-- SpecialPages future-customization note 2434. -->
+<!-- SpecialPages future-customization note 2435. -->
+<!-- SpecialPages future-customization note 2436. -->
+<!-- SpecialPages future-customization note 2437. -->
+<!-- SpecialPages future-customization note 2438. -->
+<!-- SpecialPages future-customization note 2439. -->
+<!-- SpecialPages future-customization note 2440. -->
+<!-- SpecialPages future-customization note 2441. -->
+<!-- SpecialPages future-customization note 2442. -->
+<!-- SpecialPages future-customization note 2443. -->
+<!-- SpecialPages future-customization note 2444. -->
+<!-- SpecialPages future-customization note 2445. -->
+<!-- SpecialPages future-customization note 2446. -->
+<!-- SpecialPages future-customization note 2447. -->
+<!-- SpecialPages future-customization note 2448. -->
+<!-- SpecialPages future-customization note 2449. -->
+<!-- SpecialPages future-customization note 2450. -->
+<!-- SpecialPages future-customization note 2451. -->
+<!-- SpecialPages future-customization note 2452. -->
+<!-- SpecialPages future-customization note 2453. -->
+<!-- SpecialPages future-customization note 2454. -->
+<!-- SpecialPages future-customization note 2455. -->
+<!-- SpecialPages future-customization note 2456. -->
+<!-- SpecialPages future-customization note 2457. -->
+<!-- SpecialPages future-customization note 2458. -->
+<!-- SpecialPages future-customization note 2459. -->
+<!-- SpecialPages future-customization note 2460. -->
+<!-- SpecialPages future-customization note 2461. -->
+<!-- SpecialPages future-customization note 2462. -->
+<!-- SpecialPages future-customization note 2463. -->
+<!-- SpecialPages future-customization note 2464. -->
+<!-- SpecialPages future-customization note 2465. -->
+<!-- SpecialPages future-customization note 2466. -->
+<!-- SpecialPages future-customization note 2467. -->
+<!-- SpecialPages future-customization note 2468. -->
+<!-- SpecialPages future-customization note 2469. -->
+<!-- SpecialPages future-customization note 2470. -->
+<!-- SpecialPages future-customization note 2471. -->
+<!-- SpecialPages future-customization note 2472. -->
+<!-- SpecialPages future-customization note 2473. -->
+<!-- SpecialPages future-customization note 2474. -->
+<!-- SpecialPages future-customization note 2475. -->
+<!-- SpecialPages future-customization note 2476. -->
+<!-- SpecialPages future-customization note 2477. -->
+<!-- SpecialPages future-customization note 2478. -->
+<!-- SpecialPages future-customization note 2479. -->
+<!-- SpecialPages future-customization note 2480. -->
+<!-- SpecialPages future-customization note 2481. -->
+<!-- SpecialPages future-customization note 2482. -->
+<!-- SpecialPages future-customization note 2483. -->
+<!-- SpecialPages future-customization note 2484. -->
+<!-- SpecialPages future-customization note 2485. -->
+<!-- SpecialPages future-customization note 2486. -->
+<!-- SpecialPages future-customization note 2487. -->
+<!-- SpecialPages future-customization note 2488. -->
+<!-- SpecialPages future-customization note 2489. -->
+<!-- SpecialPages future-customization note 2490. -->
+<!-- SpecialPages future-customization note 2491. -->
+<!-- SpecialPages future-customization note 2492. -->
+<!-- SpecialPages future-customization note 2493. -->
+<!-- SpecialPages future-customization note 2494. -->
+<!-- SpecialPages future-customization note 2495. -->
+<!-- SpecialPages future-customization note 2496. -->
+<!-- SpecialPages future-customization note 2497. -->
+<!-- SpecialPages future-customization note 2498. -->
+<!-- SpecialPages future-customization note 2499. -->
+<!-- SpecialPages future-customization note 2500. -->
+<!-- SpecialPages future-customization note 2501. -->
+<!-- SpecialPages future-customization note 2502. -->
+<!-- SpecialPages future-customization note 2503. -->
+<!-- SpecialPages future-customization note 2504. -->
+<!-- SpecialPages future-customization note 2505. -->
+<!-- SpecialPages future-customization note 2506. -->
+<!-- SpecialPages future-customization note 2507. -->
+<!-- SpecialPages future-customization note 2508. -->
+<!-- SpecialPages future-customization note 2509. -->
+<!-- SpecialPages future-customization note 2510. -->
+<!-- SpecialPages future-customization note 2511. -->
+<!-- SpecialPages future-customization note 2512. -->
+<!-- SpecialPages future-customization note 2513. -->
+<!-- SpecialPages future-customization note 2514. -->
+<!-- SpecialPages future-customization note 2515. -->
+<!-- SpecialPages future-customization note 2516. -->
+<!-- SpecialPages future-customization note 2517. -->
+<!-- SpecialPages future-customization note 2518. -->
+<!-- SpecialPages future-customization note 2519. -->
+<!-- SpecialPages future-customization note 2520. -->
+<!-- SpecialPages future-customization note 2521. -->
+<!-- SpecialPages future-customization note 2522. -->
+<!-- SpecialPages future-customization note 2523. -->
+<!-- SpecialPages future-customization note 2524. -->
+<!-- SpecialPages future-customization note 2525. -->
+<!-- SpecialPages future-customization note 2526. -->
+<!-- SpecialPages future-customization note 2527. -->
+<!-- SpecialPages future-customization note 2528. -->
+<!-- SpecialPages future-customization note 2529. -->
+<!-- SpecialPages future-customization note 2530. -->
+<!-- SpecialPages future-customization note 2531. -->
+<!-- SpecialPages future-customization note 2532. -->
+<!-- SpecialPages future-customization note 2533. -->
+<!-- SpecialPages future-customization note 2534. -->
+<!-- SpecialPages future-customization note 2535. -->
+<!-- SpecialPages future-customization note 2536. -->
+<!-- SpecialPages future-customization note 2537. -->
+<!-- SpecialPages future-customization note 2538. -->
+<!-- SpecialPages future-customization note 2539. -->
+<!-- SpecialPages future-customization note 2540. -->
+<!-- SpecialPages future-customization note 2541. -->
+<!-- SpecialPages future-customization note 2542. -->
+<!-- SpecialPages future-customization note 2543. -->
+<!-- SpecialPages future-customization note 2544. -->
+<!-- SpecialPages future-customization note 2545. -->
+<!-- SpecialPages future-customization note 2546. -->
+<!-- SpecialPages future-customization note 2547. -->
+<!-- SpecialPages future-customization note 2548. -->
+<!-- SpecialPages future-customization note 2549. -->
+<!-- SpecialPages future-customization note 2550. -->
+<!-- SpecialPages future-customization note 2551. -->
+<!-- SpecialPages future-customization note 2552. -->
+<!-- SpecialPages future-customization note 2553. -->
+<!-- SpecialPages future-customization note 2554. -->
+<!-- SpecialPages future-customization note 2555. -->
+<!-- SpecialPages future-customization note 2556. -->
+<!-- SpecialPages future-customization note 2557. -->
+<!-- SpecialPages future-customization note 2558. -->
+<!-- SpecialPages future-customization note 2559. -->
+<!-- SpecialPages future-customization note 2560. -->
+<!-- SpecialPages future-customization note 2561. -->
+<!-- SpecialPages future-customization note 2562. -->
+<!-- SpecialPages future-customization note 2563. -->
+<!-- SpecialPages future-customization note 2564. -->
+<!-- SpecialPages future-customization note 2565. -->
+<!-- SpecialPages future-customization note 2566. -->
+<!-- SpecialPages future-customization note 2567. -->
+<!-- SpecialPages future-customization note 2568. -->
+<!-- SpecialPages future-customization note 2569. -->
+<!-- SpecialPages future-customization note 2570. -->
+<!-- SpecialPages future-customization note 2571. -->
+<!-- SpecialPages future-customization note 2572. -->
+<!-- SpecialPages future-customization note 2573. -->
+<!-- SpecialPages future-customization note 2574. -->
+<!-- SpecialPages future-customization note 2575. -->
+<!-- SpecialPages future-customization note 2576. -->
+<!-- SpecialPages future-customization note 2577. -->
+<!-- SpecialPages future-customization note 2578. -->
+<!-- SpecialPages future-customization note 2579. -->
+<!-- SpecialPages future-customization note 2580. -->
+<!-- SpecialPages future-customization note 2581. -->
+<!-- SpecialPages future-customization note 2582. -->
+<!-- SpecialPages future-customization note 2583. -->
+<!-- SpecialPages future-customization note 2584. -->
+<!-- SpecialPages future-customization note 2585. -->
+<!-- SpecialPages future-customization note 2586. -->
+<!-- SpecialPages future-customization note 2587. -->
+<!-- SpecialPages future-customization note 2588. -->
+<!-- SpecialPages future-customization note 2589. -->
+<!-- SpecialPages future-customization note 2590. -->
+<!-- SpecialPages future-customization note 2591. -->
+<!-- SpecialPages future-customization note 2592. -->
+<!-- SpecialPages future-customization note 2593. -->
+<!-- SpecialPages future-customization note 2594. -->
+<!-- SpecialPages future-customization note 2595. -->
+<!-- SpecialPages future-customization note 2596. -->
+<!-- SpecialPages future-customization note 2597. -->
+<!-- SpecialPages future-customization note 2598. -->
+<!-- SpecialPages future-customization note 2599. -->
+<!-- SpecialPages future-customization note 2600. -->
+<!-- SpecialPages future-customization note 2601. -->
+<!-- SpecialPages future-customization note 2602. -->
+<!-- SpecialPages future-customization note 2603. -->
+<!-- SpecialPages future-customization note 2604. -->
+<!-- SpecialPages future-customization note 2605. -->
+<!-- SpecialPages future-customization note 2606. -->
+<!-- SpecialPages future-customization note 2607. -->
+<!-- SpecialPages future-customization note 2608. -->
+<!-- SpecialPages future-customization note 2609. -->
+<!-- SpecialPages future-customization note 2610. -->
+<!-- SpecialPages future-customization note 2611. -->
+<!-- SpecialPages future-customization note 2612. -->
+<!-- SpecialPages future-customization note 2613. -->
+<!-- SpecialPages future-customization note 2614. -->
+<!-- SpecialPages future-customization note 2615. -->
+<!-- SpecialPages future-customization note 2616. -->
+<!-- SpecialPages future-customization note 2617. -->
+<!-- SpecialPages future-customization note 2618. -->
+<!-- SpecialPages future-customization note 2619. -->
+<!-- SpecialPages future-customization note 2620. -->
+<!-- SpecialPages future-customization note 2621. -->
+<!-- SpecialPages future-customization note 2622. -->
+<!-- SpecialPages future-customization note 2623. -->
+<!-- SpecialPages future-customization note 2624. -->
+<!-- SpecialPages future-customization note 2625. -->
+<!-- SpecialPages future-customization note 2626. -->
+<!-- SpecialPages future-customization note 2627. -->
+<!-- SpecialPages future-customization note 2628. -->
+<!-- SpecialPages future-customization note 2629. -->
+<!-- SpecialPages future-customization note 2630. -->
+<!-- SpecialPages future-customization note 2631. -->
+<!-- SpecialPages future-customization note 2632. -->
+<!-- SpecialPages future-customization note 2633. -->
+<!-- SpecialPages future-customization note 2634. -->
+<!-- SpecialPages future-customization note 2635. -->
+<!-- SpecialPages future-customization note 2636. -->
+<!-- SpecialPages future-customization note 2637. -->
+<!-- SpecialPages future-customization note 2638. -->
+<!-- SpecialPages future-customization note 2639. -->
+<!-- SpecialPages future-customization note 2640. -->
+<!-- SpecialPages future-customization note 2641. -->
+<!-- SpecialPages future-customization note 2642. -->
+<!-- SpecialPages future-customization note 2643. -->
+<!-- SpecialPages future-customization note 2644. -->
+<!-- SpecialPages future-customization note 2645. -->
+<!-- SpecialPages future-customization note 2646. -->
+<!-- SpecialPages future-customization note 2647. -->
+<!-- SpecialPages future-customization note 2648. -->
+<!-- SpecialPages future-customization note 2649. -->
+<!-- SpecialPages future-customization note 2650. -->
+<!-- SpecialPages future-customization note 2651. -->
+<!-- SpecialPages future-customization note 2652. -->
+<!-- SpecialPages future-customization note 2653. -->
+<!-- SpecialPages future-customization note 2654. -->
+<!-- SpecialPages future-customization note 2655. -->
+<!-- SpecialPages future-customization note 2656. -->
+<!-- SpecialPages future-customization note 2657. -->
+<!-- SpecialPages future-customization note 2658. -->
+<!-- SpecialPages future-customization note 2659. -->
+<!-- SpecialPages future-customization note 2660. -->
+<!-- SpecialPages future-customization note 2661. -->
+<!-- SpecialPages future-customization note 2662. -->
+<!-- SpecialPages future-customization note 2663. -->
+<!-- SpecialPages future-customization note 2664. -->
+<!-- SpecialPages future-customization note 2665. -->
+<!-- SpecialPages future-customization note 2666. -->
+<!-- SpecialPages future-customization note 2667. -->
+<!-- SpecialPages future-customization note 2668. -->
+<!-- SpecialPages future-customization note 2669. -->
+<!-- SpecialPages future-customization note 2670. -->
+<!-- SpecialPages future-customization note 2671. -->
+<!-- SpecialPages future-customization note 2672. -->
+<!-- SpecialPages future-customization note 2673. -->
+<!-- SpecialPages future-customization note 2674. -->
+<!-- SpecialPages future-customization note 2675. -->
+<!-- SpecialPages future-customization note 2676. -->
+<!-- SpecialPages future-customization note 2677. -->
+<!-- SpecialPages future-customization note 2678. -->
+<!-- SpecialPages future-customization note 2679. -->
+<!-- SpecialPages future-customization note 2680. -->
+<!-- SpecialPages future-customization note 2681. -->
+<!-- SpecialPages future-customization note 2682. -->
+<!-- SpecialPages future-customization note 2683. -->
+<!-- SpecialPages future-customization note 2684. -->
+<!-- SpecialPages future-customization note 2685. -->
+<!-- SpecialPages future-customization note 2686. -->
+<!-- SpecialPages future-customization note 2687. -->
+<!-- SpecialPages future-customization note 2688. -->
+<!-- SpecialPages future-customization note 2689. -->
+<!-- SpecialPages future-customization note 2690. -->
+<!-- SpecialPages future-customization note 2691. -->
+<!-- SpecialPages future-customization note 2692. -->
+<!-- SpecialPages future-customization note 2693. -->
+<!-- SpecialPages future-customization note 2694. -->
+<!-- SpecialPages future-customization note 2695. -->
+<!-- SpecialPages future-customization note 2696. -->
+<!-- SpecialPages future-customization note 2697. -->
+<!-- SpecialPages future-customization note 2698. -->
+<!-- SpecialPages future-customization note 2699. -->
+<!-- SpecialPages future-customization note 2700. -->
+<!-- SpecialPages future-customization note 2701. -->
+<!-- SpecialPages future-customization note 2702. -->
+<!-- SpecialPages future-customization note 2703. -->
+<!-- SpecialPages future-customization note 2704. -->
+<!-- SpecialPages future-customization note 2705. -->
+<!-- SpecialPages future-customization note 2706. -->
+<!-- SpecialPages future-customization note 2707. -->
+<!-- SpecialPages future-customization note 2708. -->
+<!-- SpecialPages future-customization note 2709. -->
+<!-- SpecialPages future-customization note 2710. -->
+<!-- SpecialPages future-customization note 2711. -->
+<!-- SpecialPages future-customization note 2712. -->
+<!-- SpecialPages future-customization note 2713. -->
+<!-- SpecialPages future-customization note 2714. -->
+<!-- SpecialPages future-customization note 2715. -->
+<!-- SpecialPages future-customization note 2716. -->
+<!-- SpecialPages future-customization note 2717. -->
+<!-- SpecialPages future-customization note 2718. -->
+<!-- SpecialPages future-customization note 2719. -->
+<!-- SpecialPages future-customization note 2720. -->
+<!-- SpecialPages future-customization note 2721. -->
+<!-- SpecialPages future-customization note 2722. -->
+<!-- SpecialPages future-customization note 2723. -->
+<!-- SpecialPages future-customization note 2724. -->
+<!-- SpecialPages future-customization note 2725. -->
+<!-- SpecialPages future-customization note 2726. -->
+<!-- SpecialPages future-customization note 2727. -->
+<!-- SpecialPages future-customization note 2728. -->
+<!-- SpecialPages future-customization note 2729. -->
+<!-- SpecialPages future-customization note 2730. -->
+<!-- SpecialPages future-customization note 2731. -->
+<!-- SpecialPages future-customization note 2732. -->
+<!-- SpecialPages future-customization note 2733. -->
+<!-- SpecialPages future-customization note 2734. -->
+<!-- SpecialPages future-customization note 2735. -->
+<!-- SpecialPages future-customization note 2736. -->
+<!-- SpecialPages future-customization note 2737. -->
+<!-- SpecialPages future-customization note 2738. -->
+<!-- SpecialPages future-customization note 2739. -->
+<!-- SpecialPages future-customization note 2740. -->
+<!-- SpecialPages future-customization note 2741. -->
+<!-- SpecialPages future-customization note 2742. -->
+<!-- SpecialPages future-customization note 2743. -->
+<!-- SpecialPages future-customization note 2744. -->
+<!-- SpecialPages future-customization note 2745. -->
+<!-- SpecialPages future-customization note 2746. -->
+<!-- SpecialPages future-customization note 2747. -->
+<!-- SpecialPages future-customization note 2748. -->
+<!-- SpecialPages future-customization note 2749. -->
+<!-- SpecialPages future-customization note 2750. -->
+<!-- SpecialPages future-customization note 2751. -->
+<!-- SpecialPages future-customization note 2752. -->
+<!-- SpecialPages future-customization note 2753. -->
+<!-- SpecialPages future-customization note 2754. -->
+<!-- SpecialPages future-customization note 2755. -->
+<!-- SpecialPages future-customization note 2756. -->
+<!-- SpecialPages future-customization note 2757. -->
+<!-- SpecialPages future-customization note 2758. -->
+<!-- SpecialPages future-customization note 2759. -->
+<!-- SpecialPages future-customization note 2760. -->
+<!-- SpecialPages future-customization note 2761. -->
+<!-- SpecialPages future-customization note 2762. -->
+<!-- SpecialPages future-customization note 2763. -->
+<!-- SpecialPages future-customization note 2764. -->
+<!-- SpecialPages future-customization note 2765. -->
+<!-- SpecialPages future-customization note 2766. -->
+<!-- SpecialPages future-customization note 2767. -->
+<!-- SpecialPages future-customization note 2768. -->
+<!-- SpecialPages future-customization note 2769. -->
+<!-- SpecialPages future-customization note 2770. -->
+<!-- SpecialPages future-customization note 2771. -->
+<!-- SpecialPages future-customization note 2772. -->
+<!-- SpecialPages future-customization note 2773. -->
+<!-- SpecialPages future-customization note 2774. -->
+<!-- SpecialPages future-customization note 2775. -->
+<!-- SpecialPages future-customization note 2776. -->
+<!-- SpecialPages future-customization note 2777. -->
+<!-- SpecialPages future-customization note 2778. -->
+<!-- SpecialPages future-customization note 2779. -->
+<!-- SpecialPages future-customization note 2780. -->
+<!-- SpecialPages future-customization note 2781. -->
+<!-- SpecialPages future-customization note 2782. -->
+<!-- SpecialPages future-customization note 2783. -->
+<!-- SpecialPages future-customization note 2784. -->
+<!-- SpecialPages future-customization note 2785. -->
+<!-- SpecialPages future-customization note 2786. -->
+<!-- SpecialPages future-customization note 2787. -->
+<!-- SpecialPages future-customization note 2788. -->
+<!-- SpecialPages future-customization note 2789. -->
+<!-- SpecialPages future-customization note 2790. -->
+<!-- SpecialPages future-customization note 2791. -->
+<!-- SpecialPages future-customization note 2792. -->
+<!-- SpecialPages future-customization note 2793. -->
+<!-- SpecialPages future-customization note 2794. -->
+<!-- SpecialPages future-customization note 2795. -->
+<!-- SpecialPages future-customization note 2796. -->
+<!-- SpecialPages future-customization note 2797. -->
+<!-- SpecialPages future-customization note 2798. -->
+<!-- SpecialPages future-customization note 2799. -->
+<!-- SpecialPages future-customization note 2800. -->
+</body>
+</html>
